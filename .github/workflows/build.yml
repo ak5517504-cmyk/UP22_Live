@@ -1,0 +1,30 @@
+name: Build UP22 APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unzip File
+        run: unzip UP22_Live_FullSource.zip -d UP22_Source
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Build Android APK
+        run: |
+          cd UP22_Source/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: UP22_Live_App
+          path: UP22_Source/android/app/build/outputs/apk/debug/app-debug.apk
+          
